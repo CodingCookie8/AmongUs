@@ -1,0 +1,29 @@
+main: me.codingcookie.AmongUs
+name: AmongUs
+version: ${project.version}
+description: Among Us! (but in Minecraft)
+api-version: 1.16
+author: CodingCookie
+
+commands:
+  amongus:
+    description: The main command for the plugin.
+    aliases: [amongus]
+
+permissions:
+  amongus.*:
+    description: Grants access to all commands within the plugin.
+    default: op
+    children:
+      amongus.help: true
+      amongus.play: true
+      amongus.locationmenu: true
+  amongus.help:
+    description: Grants access to the help command.
+    default: op
+  amongus.play:
+    description: Grants access to the play command.
+    default: op
+  amongus.locationmenu:
+    description: Grants access to change locations.
+    default: op

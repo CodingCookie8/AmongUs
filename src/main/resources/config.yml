@@ -1,0 +1,229 @@
+location:
+  lobby:
+    setup: false
+    x: 0
+    y: 0
+    z: 0
+    world: "world"
+  emergencymeeting:
+    1:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    2:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    3:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    4:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    5:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    6:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    7:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    8:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    9:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    10:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+  vent:
+    1:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    2:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    3:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    4:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    5:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    6:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+  tasks:
+    fixwiring:
+      1:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+      2:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+      3:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+    upload:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    download:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    navigation:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    clearasteroid:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    swipecard:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    fuelengines:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    trashchute:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+    inspect:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
+  sabotage:
+    meltdown:
+      1:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+      2:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+    fixlights:
+      1:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+      2:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+    cleano2:
+      1:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+      2:
+        setup: false
+        x: 0
+        y: 0
+        z: 0
+        world: "world"
+
+settings:
+  imposters: 1
+  maxemergencymeetings: 2
+  emergencycooldown: 20 #seconds
+  discussion: 10 #seconds
+  voting: 60 #seconds
+  crewmatevision: true
+  impostervision: true
+  killcooldown: 20 #seconds
+
+
+
+
+
+
