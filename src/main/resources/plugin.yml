@@ -1,4 +1,4 @@
-main: me.codingcookie.AmongUs
+main: me.codingcookie.amongus.AmongUs
 name: AmongUs
 version: ${project.version}
 description: Among Us! (but in Minecraft)
@@ -17,6 +17,7 @@ permissions:
     children:
       amongus.help: true
       amongus.play: true
+      amongus.kickall: true
       amongus.locationmenu: true
   amongus.help:
     description: Grants access to the help command.
@@ -24,6 +25,6 @@ permissions:
   amongus.play:
     description: Grants access to the play command.
     default: op
-  amongus.locationmenu:
-    description: Grants access to change locations.
+  amongus.kickall:
+    description: Grants access to the kickall command.
     default: op

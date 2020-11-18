@@ -6,6 +6,12 @@ location:
     z: 0
     world: "world"
   emergencymeeting:
+    button:
+      setup: false
+      x: 0
+      y: 0
+      z: 0
+      world: "world"
     1:
       setup: false
       x: 0
@@ -103,7 +109,7 @@ location:
       y: 0
       z: 0
       world: "world"
-  tasks:
+  task:
     fixwiring:
       1:
         setup: false
@@ -221,6 +227,7 @@ settings:
   crewmatevision: true
   impostervision: true
   killcooldown: 20 #seconds
+  sabotagelength: 30 #seconds
 
 
 

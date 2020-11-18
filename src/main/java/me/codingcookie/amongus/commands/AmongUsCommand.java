@@ -1,0 +1,108 @@
+package me.codingcookie.amongus.commands;
+
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.*;
+import me.codingcookie.amongus.AmongUs;
+import me.codingcookie.amongus.commands.subcommands.HelpCommand;
+import me.codingcookie.amongus.commands.subcommands.PlayCommand;
+import me.codingcookie.amongus.commands.subcommands.SetupCommand;
+import me.codingcookie.amongus.entities.ArmorStandsUtil;
+import me.codingcookie.amongus.gui.tasks.UploadGUI;
+import me.codingcookie.amongus.utility.GameUtil;
+import org.bukkit.entity.Player;
+
+import static org.bukkit.ChatColor.*;
+
+@CommandAlias("amongus")
+public class AmongUsCommand extends BaseCommand {
+
+    private final AmongUs plugin;
+
+    public AmongUsCommand(AmongUs plugin){
+        this.plugin = plugin;
+    }
+
+    private SetupCommand setupCommand;
+    private me.codingcookie.amongus.commands.subcommands.HelpCommand helpCommand;
+    private PlayCommand playCommand;
+    private ArmorStandsUtil armorStandsUtil;
+    private GameUtil gameUtil;
+    private UploadGUI uploadGUI;
+
+    @Default
+    @CommandPermission("amongus.help")
+    public void onDefault(Player player){
+        helpCommand = new HelpCommand(plugin);
+        helpCommand.helpCommand(player);
+    }
+
+    @Subcommand("setup")
+    @Description("Setup the AmongUs game")
+    @CommandPermission("amongus.setup")
+    public void onSetup(Player player, String[] args){
+        if(args.length == 0){
+            setupCommand = new SetupCommand(plugin);
+            setupCommand.setupCommand(player);
+        }
+    }
+
+    @Subcommand("help")
+    @Description("See all available commands for the plugin")
+    @CommandPermission("amongus.help")
+    public void onHelp(Player player, String[] args){
+        if(args.length == 0){
+            helpCommand = new HelpCommand(plugin);
+            helpCommand.helpCommand(player);
+        }
+    }
+
+    @Subcommand("play")
+    @Description("Play the game!")
+    @CommandPermission("amongus.play")
+    public void onPlay(Player player, String[] args){
+        if(args.length == 0){
+            playCommand = new PlayCommand(plugin);
+            playCommand.playCommand(player);
+        }
+    }
+
+    @Subcommand("kickall")
+    @Description("Kick all players from the game.")
+    @CommandPermission("amongus.kickall")
+    public void onKickAll(Player player, String[] args){
+        if(args.length == 0){
+            gameUtil = new GameUtil(plugin);
+            gameUtil.endGame(RED, "Kicked!", player.getName() + " kicked you from the game", RED, "Kicked!", player.getName() + " kicked you from the game");
+        }
+    }
+
+    @Subcommand("removearmorstands")
+    @Description("temporary development command. if you see this please ignore and alert developer asap.")
+    public void onRemoveArmorStands(Player player, String[] args){
+        if(!player.isOp()){
+            return;
+        }
+        armorStandsUtil = new ArmorStandsUtil(plugin);
+        armorStandsUtil.removeArmorStands(player.getWorld());
+    }
+
+    @Subcommand("forcestart")
+    @Description("temporary development command.")
+    public void onForceStart(Player player, String[] args){
+        if(!player.isOp()){
+            return;
+        }
+        gameUtil = new GameUtil(plugin);
+        gameUtil.startRound();
+    }
+
+    @Subcommand("openuploadtask")
+    @Description("temporary development command.")
+    public void onUploadTask(Player player, String[] args){
+        if(!player.isOp()){
+            return;
+        }
+        uploadGUI = new UploadGUI(plugin);
+        uploadGUI.setUploadGUI(player);
+    }
+}
