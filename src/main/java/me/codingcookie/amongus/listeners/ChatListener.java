@@ -37,7 +37,6 @@ public class ChatListener implements Listener {
                event.setCancelled(true);
            }
         }
-
         if(Singleton.getInstance().getWaitingForSettingInt().containsKey(player.getUniqueId())){
             int number = 0;
             try {
