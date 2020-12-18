@@ -1,10 +1,13 @@
 package me.codingcookie.amongus.gui.tasks;
 
 import me.codingcookie.amongus.AmongUs;
+import me.codingcookie.amongus.gui.items.InspectGUIItems;
 import me.codingcookie.amongus.gui.items.UploadGUIItems;
 import me.codingcookie.amongus.utility.CrewmateUtil;
+import me.codingcookie.amongus.utility.MessagesUtil;
 import me.codingcookie.amongus.utility.Singleton;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -35,6 +38,11 @@ public class UploadGUI {
     public void setPreUploadGUI(Player player){
         uploadGUIItems = new UploadGUIItems(plugin);
 
+        if(Singleton.getInstance().getUploadComplete().contains(player.getName())){
+            MessagesUtil.NO_TASK.sendMessage(player);
+            return;
+        }
+
         getInvUploading().setItem(22, uploadGUIItems.makeStartUpload());
 
         openUpload(player);
@@ -62,10 +70,19 @@ public class UploadGUI {
                         player.updateInventory();
                     }else{
                         getInvUploading().clear();
+                        fillInventory();
                         getInvUploading().setItem(22, uploadGUIItems.makeUploadBook(true, "Click this book to", "complete the task!"));
+                        Singleton.getInstance().getUploadComplete().add(player.getName());
                     }
                 }
             }.runTaskLater(plugin, finalLoadingSlot * 40);
+        }
+    }
+
+    void fillInventory(){
+        uploadGUIItems = new UploadGUIItems(plugin);
+        for(int slots = 0; slots <= 44; slots++){
+            getInvUploading().setItem(slots, uploadGUIItems.makeUploadPane(Material.GRAY_STAINED_GLASS_PANE, " "));
         }
     }
 

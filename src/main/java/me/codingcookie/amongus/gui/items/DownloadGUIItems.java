@@ -17,6 +17,7 @@ public class DownloadGUIItems {
     private ItemStack startDownload;
     private ItemStack downloadBook;
     private ItemStack loading;
+    private ItemStack downloadPane;
 
     public DownloadGUIItems(AmongUs plugin) {
         this.plugin = plugin;
@@ -65,6 +66,15 @@ public class DownloadGUIItems {
             loading.setItemMeta(downloadMeta);
         }
         return loading;
+    }
+
+    public ItemStack makeDownloadPane(Material glassPane, String name) {
+        downloadPane = new ItemStack(glassPane);
+        ItemMeta sm = downloadPane.getItemMeta();
+        sm.setDisplayName(name);
+        sm.setLore(Arrays.asList(""));
+        downloadPane.setItemMeta(sm);
+        return downloadPane;
     }
 }
 

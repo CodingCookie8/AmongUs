@@ -10,6 +10,7 @@ public enum MessagesUtil {
 
     IN_GAME(GRAY + "> " + RED + "This command can only be run in game."),
     VISION_OFF(BLUE + "" + BOLD + "[AmongUs] " + GOLD + "Your vision is turned off!"),
+    NO_TASK(BLUE + "" + BOLD + "[AmongUs] " + RED + "You've already completed this task!"),
     ERROR_1(RED + "[AmongUs] ERROR 1: Something went horribly wrong! Contact the developer as soon as possible.");
 
     private String message;

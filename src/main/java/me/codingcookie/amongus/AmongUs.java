@@ -5,10 +5,7 @@ import co.aikar.commands.BukkitCommandManager;
 import me.codingcookie.amongus.commands.AmongUsCommand;
 import me.codingcookie.amongus.commands.subcommands.SetupCommand;
 import me.codingcookie.amongus.commands.subcommands.setupmodule.locationmenu.LocationMainMenu;
-import me.codingcookie.amongus.listeners.ChatListener;
-import me.codingcookie.amongus.listeners.InventoryClickListener;
-import me.codingcookie.amongus.listeners.PlayerInteractListener;
-import me.codingcookie.amongus.listeners.QuitListener;
+import me.codingcookie.amongus.listeners.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,6 +25,8 @@ public class AmongUs extends JavaPlugin {
     public ChatListener chatListener;
     public PlayerInteractListener playerInteractListener;
     public InventoryClickListener inventoryClickListener;
+    public FoodLevelChangeListener foodLevelChangeListener;
+    public DamageListener damageListener;
 
     @Override
     public void onEnable(){
@@ -57,12 +56,16 @@ public class AmongUs extends JavaPlugin {
         quitListener = new QuitListener(this);
         playerInteractListener = new PlayerInteractListener(this);
         inventoryClickListener = new InventoryClickListener(this);
+        foodLevelChangeListener = new FoodLevelChangeListener(this);
+        damageListener = new DamageListener(this);
 
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(chatListener, this);
         pm.registerEvents(quitListener, this);
         pm.registerEvents(playerInteractListener, this);
         pm.registerEvents(inventoryClickListener, this);
+        pm.registerEvents(foodLevelChangeListener, this);
+        pm.registerEvents(damageListener, this);
 
         asciiArt();
     }

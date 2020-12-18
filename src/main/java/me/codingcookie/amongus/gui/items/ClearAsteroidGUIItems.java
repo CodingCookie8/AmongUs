@@ -18,6 +18,7 @@ public class ClearAsteroidGUIItems {
     private ItemStack endClearAsteroid;
     private ItemStack clearAsteroidSpace;
     private ItemStack asteroid;
+    private ItemStack asteroidPane;
 
     public ClearAsteroidGUIItems(AmongUs plugin) {
         this.plugin = plugin;
@@ -76,4 +77,12 @@ public class ClearAsteroidGUIItems {
         return asteroid;
     }
 
+    public ItemStack makeAsteroidPane(Material glassPane, String name) {
+        asteroidPane = new ItemStack(glassPane);
+        ItemMeta sm = asteroidPane.getItemMeta();
+        sm.setDisplayName(name);
+        sm.setLore(Arrays.asList(""));
+        asteroidPane.setItemMeta(sm);
+        return asteroidPane;
+    }
 }

@@ -3,9 +3,12 @@ package me.codingcookie.amongus.gui.tasks;
 import me.codingcookie.amongus.AmongUs;
 import me.codingcookie.amongus.gui.items.ClearAsteroidGUIItems;
 import me.codingcookie.amongus.gui.items.DownloadGUIItems;
+import me.codingcookie.amongus.gui.items.UploadGUIItems;
 import me.codingcookie.amongus.utility.CrewmateUtil;
+import me.codingcookie.amongus.utility.MessagesUtil;
 import me.codingcookie.amongus.utility.Singleton;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -39,6 +42,12 @@ public class ClearAsteroidGUI {
 
     public void setPreClearAsteroid(Player player){
         items = new ClearAsteroidGUIItems(plugin);
+
+        if(Singleton.getInstance().getClearAsteroidComplete().contains(player.getName())){
+            MessagesUtil.NO_TASK.sendMessage(player);
+            return;
+        }
+
         getInvClearAsteroid().setItem(22, items.makeStartClearAsteroid());
 
         openClearAsteroid(player);
@@ -84,7 +93,9 @@ public class ClearAsteroidGUI {
                 if(Singleton.getInstance().getClearAsteroidNumber().get(player.getName()) <= 4){
                     getInvClearAsteroid().setItem(22, items.makeEndClearAsteroid(false, Singleton.getInstance().getClearAsteroidNumber().get(player.getName())));
                 }else{
+                    fillInventory();
                     getInvClearAsteroid().setItem(22, items.makeEndClearAsteroid(true, Singleton.getInstance().getClearAsteroidNumber().get(player.getName())));
+                    Singleton.getInstance().getClearAsteroidComplete().add(player.getName());
                 }
             }
         }.runTaskLater(plugin, 15 * 20);
@@ -106,5 +117,12 @@ public class ClearAsteroidGUI {
                 getInvClearAsteroid().setItem(slot, items.makeAsteroidSpace());
             }
         }.runTaskLater(plugin, delay);
+    }
+
+    void fillInventory(){
+        items = new ClearAsteroidGUIItems(plugin);
+        for(int slots = 0; slots <= 53; slots++){
+            getInvClearAsteroid().setItem(slots, items.makeAsteroidPane(Material.GRAY_STAINED_GLASS_PANE, " "));
+        }
     }
 }

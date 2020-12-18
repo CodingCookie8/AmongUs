@@ -6,6 +6,7 @@ import me.codingcookie.amongus.entities.ArmorStandsUtil;
 import me.codingcookie.amongus.gui.sabotages.SabotageGUI;
 import me.codingcookie.amongus.gui.tasks.ClearAsteroidGUI;
 import me.codingcookie.amongus.gui.tasks.DownloadGUI;
+import me.codingcookie.amongus.gui.tasks.InspectGUI;
 import me.codingcookie.amongus.gui.tasks.UploadGUI;
 import me.codingcookie.amongus.utility.Singleton;
 import org.bukkit.Bukkit;
@@ -33,10 +34,13 @@ public class PlayerInteractListener implements Listener {
     private UploadGUI uploadGUI;
     private DownloadGUI downloadGUI;
     private ClearAsteroidGUI clearAsteroidGUI;
+    private InspectGUI inspectGUI;
 
     public PlayerInteractListener(AmongUs plugin){
         this.plugin = plugin;
     }
+
+    HashMap<Location, String> mapTask = new HashMap<>();
     
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event){
@@ -48,6 +52,7 @@ public class PlayerInteractListener implements Listener {
         uploadGUI = new UploadGUI(plugin);
         downloadGUI = new DownloadGUI(plugin);
         clearAsteroidGUI = new ClearAsteroidGUI(plugin);
+        inspectGUI = new InspectGUI(plugin);
         Block clicked = event.getClickedBlock();
 
         if (Singleton.getInstance().getAmongUsCurrentlyPlaying().containsKey(player.getName())) {
@@ -62,20 +67,8 @@ public class PlayerInteractListener implements Listener {
                 if (clicked.getType() != Material.STONE_BUTTON) {
                     return;
                 }
-                HashMap<Location, String> mapTask = new HashMap<>();
-                ConfigurationSection locationConfig = plugin.getConfig().getConfigurationSection("location.task");
-                for(String key : locationConfig.getKeys(false)){
-                    if(key.equalsIgnoreCase("fixwiring")){
-                        continue;
-                    }
-                    String world = locationConfig.getString(key + ".world");
-                    double x = locationConfig.getInt(key + ".x");
-                    double y = locationConfig.getInt(key + ".y");
-                    double z = locationConfig.getInt(key + ".z");
-                    Location location = new Location(Bukkit.getWorld(world), x, y, z);
-
-                    mapTask.put(location, key);
-                }
+                mapTask.clear();
+                fillInHashMap();
                 if(!mapTask.containsKey(clicked.getLocation())) {
                     return;
                 }
@@ -87,6 +80,9 @@ public class PlayerInteractListener implements Listener {
                 }
                 if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("clearasteroid")){
                     clearAsteroidGUI.setPreClearAsteroid(player);
+                }
+                if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("inspect")){
+                    inspectGUI.setPreInspect(player);
                 }
             }
 
@@ -177,6 +173,32 @@ public class PlayerInteractListener implements Listener {
             return name;
         }
         return "";
+    }
+
+    void fillInHashMap(){
+        ConfigurationSection locationConfig = plugin.getConfig().getConfigurationSection("location.task");
+        for(String key : locationConfig.getKeys(false)){
+            if(key.equalsIgnoreCase("fixwiring")){
+                continue;
+            }
+            String world = locationConfig.getString(key + ".world");
+            double x = locationConfig.getInt(key + ".x");
+            double y = locationConfig.getInt(key + ".y");
+            double z = locationConfig.getInt(key + ".z");
+            Location location = new Location(Bukkit.getWorld(world), x, y, z);
+
+            mapTask.put(location, key);
+        }
+        ConfigurationSection locationConfigWiring = plugin.getConfig().getConfigurationSection("location.task.fixwiring");
+        for(String key : locationConfigWiring.getKeys(false)){
+            String world = locationConfigWiring.getString(key + ".world");
+            double x = locationConfigWiring.getInt(key + ".x");
+            double y = locationConfigWiring.getInt(key + ".y");
+            double z = locationConfigWiring.getInt(key + ".z");
+            Location location = new Location(Bukkit.getWorld(world), x, y, z);
+
+            mapTask.put(location, key);
+        }
     }
 
 }

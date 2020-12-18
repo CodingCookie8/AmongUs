@@ -16,6 +16,7 @@ public class UploadGUIItems {
     private ItemStack startUpload;
     private ItemStack uploadBook;
     private ItemStack loading;
+    private ItemStack uploadPane;
 
     public UploadGUIItems(AmongUs plugin) {
         this.plugin = plugin;
@@ -64,6 +65,15 @@ public class UploadGUIItems {
             loading.setItemMeta(uploadMeta);
         }
         return loading;
+    }
+
+    public ItemStack makeUploadPane(Material glassPane, String name) {
+        uploadPane = new ItemStack(glassPane);
+        ItemMeta sm = uploadPane.getItemMeta();
+        sm.setDisplayName(name);
+        sm.setLore(Arrays.asList(""));
+        uploadPane.setItemMeta(sm);
+        return uploadPane;
     }
 
 }

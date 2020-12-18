@@ -28,13 +28,13 @@ public class NavigationGUI {
     }
 
 
-    public void setPreDownloadGUI(Player player){
+    public void setPreNavigation(Player player){
         //getInvClearAsteroid().setItem(22, );
 
         openNavigation(player);
     }
 
-    public void setDownloadGUI(Player player){
+    public void setNavigation(Player player){
         crewmateUtil = new CrewmateUtil(plugin);
         getInvNavigation().clear();
 

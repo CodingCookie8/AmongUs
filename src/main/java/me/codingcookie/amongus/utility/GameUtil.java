@@ -104,6 +104,10 @@ public class GameUtil {
         Clearing the ArrayLists
 
          */
+        clearArrayLists();
+    }
+
+    void clearArrayLists(){
         Singleton.getInstance().getAmongUsCurrentlyPlaying().clear();
         Singleton.getInstance().getStartedO2().clear();
         Singleton.getInstance().getStartedMeltdown().clear();

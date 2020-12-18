@@ -4,8 +4,10 @@ import me.codingcookie.amongus.AmongUs;
 import me.codingcookie.amongus.gui.items.DownloadGUIItems;
 import me.codingcookie.amongus.gui.items.UploadGUIItems;
 import me.codingcookie.amongus.utility.CrewmateUtil;
+import me.codingcookie.amongus.utility.MessagesUtil;
 import me.codingcookie.amongus.utility.Singleton;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -35,6 +37,11 @@ public class DownloadGUI {
 
     public void setPreDownloadGUI(Player player){
         downloadGUIItems = new DownloadGUIItems(plugin);
+
+        if(Singleton.getInstance().getDownloadComplete().contains(player.getName())){
+            MessagesUtil.NO_TASK.sendMessage(player);
+            return;
+        }
 
         getInvDownloading().setItem(22, downloadGUIItems.makeStartDownload());
 
@@ -77,12 +84,19 @@ public class DownloadGUI {
                         player.updateInventory();
                     }else{
                         getInvDownloading().clear();
+                        fillInventory();
                         getInvDownloading().setItem(22, downloadGUIItems.makeDownloadBook(true, "Click this book to", "complete the task!"));
+                        Singleton.getInstance().getDownloadComplete().add(player.getName());
                     }
                 }
             }.runTaskLater(plugin, time * 40);
         }
     }
 
-
+    void fillInventory(){
+        downloadGUIItems = new DownloadGUIItems(plugin);
+        for(int slots = 0; slots <= 44; slots++){
+            getInvDownloading().setItem(slots, downloadGUIItems.makeDownloadPane(Material.GRAY_STAINED_GLASS_PANE, " "));
+        }
+    }
 }

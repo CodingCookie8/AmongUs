@@ -1,17 +1,16 @@
 package me.codingcookie.amongus.listeners;
 
 import me.codingcookie.amongus.AmongUs;
-import me.codingcookie.amongus.gui.items.ClearAsteroidGUIItems;
-import me.codingcookie.amongus.gui.items.DownloadGUIItems;
+import me.codingcookie.amongus.gui.items.*;
 import me.codingcookie.amongus.gui.sabotages.SabotageGUI;
-import me.codingcookie.amongus.gui.items.SabotageGUIItems;
 import me.codingcookie.amongus.gui.tasks.ClearAsteroidGUI;
 import me.codingcookie.amongus.gui.tasks.DownloadGUI;
+import me.codingcookie.amongus.gui.tasks.InspectGUI;
 import me.codingcookie.amongus.gui.tasks.UploadGUI;
-import me.codingcookie.amongus.gui.items.UploadGUIItems;
 import me.codingcookie.amongus.utility.CrewmateUtil;
 import me.codingcookie.amongus.utility.ImposterUtil;
 import me.codingcookie.amongus.utility.Singleton;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -19,7 +18,10 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.UUID;
 
 public class InventoryClickListener implements Listener {
 
@@ -33,6 +35,8 @@ public class InventoryClickListener implements Listener {
     private DownloadGUIItems downloadGUIItems;
     private ClearAsteroidGUI clearAsteroidGUI;
     private ClearAsteroidGUIItems clearAsteroidGUIItems;
+    private InspectGUI inspectGUI;
+    private InspectGUIItems inspectGUIItems;
 
     private ImposterUtil iU;
 
@@ -55,6 +59,8 @@ public class InventoryClickListener implements Listener {
         sabotageGUIItems = new SabotageGUIItems(plugin);
         clearAsteroidGUI = new ClearAsteroidGUI(plugin);
         clearAsteroidGUIItems = new ClearAsteroidGUIItems(plugin);
+        inspectGUI = new InspectGUI(plugin);
+        inspectGUIItems = new InspectGUIItems(plugin);
 
         iU = new ImposterUtil(plugin);
 
@@ -70,8 +76,6 @@ public class InventoryClickListener implements Listener {
             event.setCancelled(true);
             return;
         }
-
-        // TODO: Clean up this page.
 
         if(view.getTitle().equalsIgnoreCase("SABOTAGE")){
             if(clicked.equals(sabotageGUIItems.makeKillLights())){
@@ -96,10 +100,13 @@ public class InventoryClickListener implements Listener {
             if(clicked.equals(uploadGUIItems.makeStartUpload())){
                 uploadGUI.setUploadGUI(player);
                 event.setCancelled(true);
-            } else if(clicked.equals(uploadGUIItems.makeUploadBook(true, "Click this book to", "complete the task!"))){
-                player.closeInventory();
-                Singleton.getInstance().getUploadComplete().add(player.getName());
-                taskComplete(player, "UPLOAD");
+            } else if(clicked.equals(uploadGUIItems.makeUploadBook(true, "Click this book to", "complete the task!")) || clicked.getType() == Material.GRAY_STAINED_GLASS_PANE){
+                if(Singleton.getInstance().getUploadComplete().contains(player.getName())) {
+                    player.closeInventory();
+                    taskComplete(player, "UPLOAD");
+                }else{
+                    event.setCancelled(true);
+                }
             } else{
                 event.setCancelled(true);
                 return;
@@ -110,10 +117,13 @@ public class InventoryClickListener implements Listener {
             if(clicked.equals(downloadGUIItems.makeStartDownload())){
                 downloadGUI.setDownloadGUI(player);
                 event.setCancelled(true);
-            } else if(clicked.equals(downloadGUIItems.makeDownloadBook(true, "Click this book to", "complete the task!"))){
-                player.closeInventory();
-                Singleton.getInstance().getDownloadComplete().add(player.getName());
-                taskComplete(player, "DOWNLOAD");
+            } else if(clicked.equals(downloadGUIItems.makeDownloadBook(true, "Click this book to", "complete the task!")) || clicked.getType() == Material.GRAY_STAINED_GLASS_PANE){
+                if(Singleton.getInstance().getDownloadComplete().contains(player.getName())) {
+                    player.closeInventory();
+                    taskComplete(player, "DOWNLOAD");
+                }else{
+                    event.setCancelled(true);
+                }
             } else{
                 event.setCancelled(true);
                 return;
@@ -129,13 +139,39 @@ public class InventoryClickListener implements Listener {
                 int current = Singleton.getInstance().getClearAsteroidNumber().get(player.getName());
                 Singleton.getInstance().getClearAsteroidNumber().put(player.getName(), current + 1);
                 event.setCancelled(true);
-            } else if(clicked.equals(clearAsteroidGUIItems.makeEndClearAsteroid(true, Singleton.getInstance().getClearAsteroidNumber().get(player.getName())))){
-                player.closeInventory();
-                Singleton.getInstance().getClearAsteroidComplete().add(player.getName());
-                Singleton.getInstance().getClearAsteroidNumber().remove(player.getName());
-                event.setCancelled(true);
-                taskComplete(player, "CLEAR ASTEROID");
+            } else if(clicked.equals(clearAsteroidGUIItems.makeEndClearAsteroid(true, Singleton.getInstance().getClearAsteroidNumber().get(player.getName()))) || clicked.getType() == Material.GRAY_STAINED_GLASS_PANE){
+                if(Singleton.getInstance().getClearAsteroidComplete().contains(player.getName())) {
+                    player.closeInventory();
+                    Singleton.getInstance().getClearAsteroidNumber().remove(player.getName());
+                    event.setCancelled(true);
+                    taskComplete(player, "CLEAR ASTEROID");
+                }else{
+                    event.setCancelled(true);
+                }
             } else{
+                event.setCancelled(true);
+                return;
+            }
+        }
+
+        if(view.getTitle().equalsIgnoreCase("INSPECT TASK")){
+            if(clicked.getType() == Material.PLAYER_HEAD){
+                SkullMeta meta = (SkullMeta) clicked.getItemMeta();
+                if(meta == null){
+                    return;
+                }
+                UUID clickedPlayerUUID = meta.getOwningPlayer().getUniqueId();
+                inspectGUI.setInspect(player, clickedPlayerUUID);
+                event.setCancelled(true);
+            }else if(clicked.getType() == Material.COMMAND_BLOCK || clicked.getType() == Material.RED_STAINED_GLASS_PANE || clicked.getType() == Material.GREEN_STAINED_GLASS_PANE){
+                if(Singleton.getInstance().getInspectComplete().contains(player.getName())) {
+                    player.closeInventory();
+                    taskComplete(player, "INSPECT");
+                    event.setCancelled(true);
+                }else{
+                    event.setCancelled(true);
+                }
+            }else{
                 event.setCancelled(true);
                 return;
             }
