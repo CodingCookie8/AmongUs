@@ -59,13 +59,14 @@ public class ImposterUtil {
             if(Singleton.getInstance().getAmongUsCurrentlyPlaying().get(playerString).equalsIgnoreCase("imposter")){
                 Player imposters = Bukkit.getPlayer(playerString);
                 if(imposters == null){
+                    MessagesUtil.ERROR_2.sendMessage(player);
                     continue;
                 }
-                imposters.sendMessage(pre + GOLD + "The imposter " + RED + player.getName() + GOLD + " has turned off the lights!");
-                continue;
+                MessagesUtil.LIGHTS_OFF.sendMessage(player, imposters);
             }else{
                 Player crewmates = Bukkit.getPlayer(playerString);
                 if(crewmates == null){
+                    MessagesUtil.ERROR_2.sendMessage(player);
                     continue;
                 }
                 crewmates.sendTitle(RED + "Lights Killed!", GRAY + "Head to the electricity room to turn them back on!", 0, 60, 20);
@@ -109,34 +110,43 @@ public class ImposterUtil {
             if (Singleton.getInstance().getAmongUsCurrentlyPlaying().get(playerString).equalsIgnoreCase("imposter")) {
                 Player imposters = Bukkit.getPlayer(playerString);
                 if (imposters == null) {
+                    MessagesUtil.ERROR_2.sendMessage(player);
                     continue;
                 }
                 imposters.sendMessage(pre + GOLD + "The imposter " + RED + player.getName() + GOLD + " has started the " + sabotage + "!");
-                continue;
+                sendCountdown(imposters, sabotage);
             } else {
                 Player crewmates = Bukkit.getPlayer(playerString);
                 if(crewmates == null){
+                    MessagesUtil.ERROR_2.sendMessage(player);
                     continue;
                 }
                 crewmates.sendTitle(RED + "" + BOLD + sabotage + ": " + GOLD + sabotageLength, GRAY + "Find the " + sabotage + " buttons to save the ship!", 0, 20, 0);
                 createVignetteEffect(crewmates);
-                new BukkitRunnable() {
-                    int sabotageCounter = sabotageLength;
-                    public void run() {
-                        sabotageCounter--;
-                        if(sabotageCounter != 0){
-                            crewmates.sendTitle(RED + "" + BOLD + sabotage + ": " + GOLD + sabotageCounter, GRAY + "Find the " + sabotage + " buttons to save the ship!", 0, 21, 0);
-                        }else{
-                            gU.endGame(BLUE, "Victory!", "All the crewmates died from the " + sabotage + " sabotage!", RED, "Defeat!", "The imposters killed all the crewmates!");
-                            removeVignetteEffect(crewmates);
-                            meltdownStarted = false;
-                            o2Started = false;
-                            cancel();
-                        }
-                    }
-                }.runTaskTimer(plugin, 20, 20);
+                sendCountdown(crewmates, sabotage);
             }
         }
+    }
+
+    void sendCountdown(Player players, String sabotage){
+        int sabotageLength = plugin.getConfig().getInt("settings.sabotagelength");
+        gU = new GameUtil(plugin);
+
+        new BukkitRunnable() {
+            int sabotageCounter = sabotageLength;
+            public void run() {
+                sabotageCounter--;
+                if(sabotageCounter != 0){
+                    players.sendTitle(RED + "" + BOLD + sabotage + ": " + GOLD + sabotageCounter, GRAY + "Find the " + sabotage + " buttons to save the ship!", 0, 21, 0);
+                }else{
+                    gU.endGame(BLUE, "Victory!", "All the crewmates died from the " + sabotage + " sabotage!", RED, "Defeat!", "The imposters killed all the crewmates!");
+                    removeVignetteEffect(players);
+                    meltdownStarted = false;
+                    o2Started = false;
+                    cancel();
+                }
+            }
+        }.runTaskTimer(plugin, 20, 20);
     }
 
     WorldBorder getWorldBorder(){

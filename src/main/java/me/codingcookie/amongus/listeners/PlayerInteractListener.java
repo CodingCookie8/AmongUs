@@ -8,6 +8,7 @@ import me.codingcookie.amongus.gui.tasks.ClearAsteroidGUI;
 import me.codingcookie.amongus.gui.tasks.DownloadGUI;
 import me.codingcookie.amongus.gui.tasks.InspectGUI;
 import me.codingcookie.amongus.gui.tasks.UploadGUI;
+import me.codingcookie.amongus.utility.GameUtil;
 import me.codingcookie.amongus.utility.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -30,6 +31,7 @@ public class PlayerInteractListener implements Listener {
     private AmongUs plugin;
     private LocationUtility lU;
     private ArmorStandsUtil armorStandsUtil;
+    private GameUtil gameUtil;
     private SabotageGUI sabotageGUI;
     private UploadGUI uploadGUI;
     private DownloadGUI downloadGUI;
@@ -40,7 +42,7 @@ public class PlayerInteractListener implements Listener {
         this.plugin = plugin;
     }
 
-    HashMap<Location, String> mapTask = new HashMap<>();
+    public static HashMap<Location, String> mapTask = new HashMap<>();
     
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event){
@@ -48,6 +50,7 @@ public class PlayerInteractListener implements Listener {
 
         lU = new LocationUtility(plugin);
         armorStandsUtil = new ArmorStandsUtil(plugin);
+        gameUtil = new GameUtil(plugin);
         sabotageGUI = new SabotageGUI(plugin);
         uploadGUI = new UploadGUI(plugin);
         downloadGUI = new DownloadGUI(plugin);
@@ -67,8 +70,7 @@ public class PlayerInteractListener implements Listener {
                 if (clicked.getType() != Material.STONE_BUTTON) {
                     return;
                 }
-                mapTask.clear();
-                fillInHashMap();
+
                 if(!mapTask.containsKey(clicked.getLocation())) {
                     return;
                 }
@@ -83,6 +85,9 @@ public class PlayerInteractListener implements Listener {
                 }
                 if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("inspect")){
                     inspectGUI.setPreInspect(player);
+                }
+                if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("button")){
+                    gameUtil.emergencyMeeting(player, " called an emergency meeting!");
                 }
             }
 
@@ -175,7 +180,7 @@ public class PlayerInteractListener implements Listener {
         return "";
     }
 
-    void fillInHashMap(){
+    public void fillInHashMap(){
         ConfigurationSection locationConfig = plugin.getConfig().getConfigurationSection("location.task");
         for(String key : locationConfig.getKeys(false)){
             if(key.equalsIgnoreCase("fixwiring")){
@@ -199,6 +204,17 @@ public class PlayerInteractListener implements Listener {
 
             mapTask.put(location, key);
         }
+        ConfigurationSection locationConfigEmerButton = plugin.getConfig().getConfigurationSection("location.emergencymeeting");
+        for(String key : locationConfigEmerButton.getKeys(false)){
+            String world = locationConfigEmerButton.getString(key + ".world");
+            double x = locationConfigEmerButton.getInt(key + ".x");
+            double y = locationConfigEmerButton.getInt(key + ".y");
+            double z = locationConfigEmerButton.getInt(key + ".z");
+            Location location = new Location(Bukkit.getWorld(world), x, y, z);
+
+            mapTask.put(location, key);
+        }
+
     }
 
 }

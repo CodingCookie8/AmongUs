@@ -21,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class InventoryClickListener implements Listener {
@@ -131,18 +132,21 @@ public class InventoryClickListener implements Listener {
         }
 
         if(view.getTitle().equalsIgnoreCase("CLEAR ASTEROID TASK")){
+
             if(clicked.equals(clearAsteroidGUIItems.makeStartClearAsteroid())){
                 clearAsteroidGUI.setClearAsteroid(player);
                 event.setCancelled(true);
+
             } else if(clicked.equals(clearAsteroidGUIItems.makeAsteroid())){
                 event.setCurrentItem(clearAsteroidGUIItems.makeAsteroidSpace());
-                int current = Singleton.getInstance().getClearAsteroidNumber().get(player.getName());
-                Singleton.getInstance().getClearAsteroidNumber().put(player.getName(), current + 1);
+                int current = ClearAsteroidGUI.asteroidNumber.get(player.getName());
+                ClearAsteroidGUI.asteroidNumber.put(player.getName(), current + 1);
                 event.setCancelled(true);
-            } else if(clicked.equals(clearAsteroidGUIItems.makeEndClearAsteroid(true, Singleton.getInstance().getClearAsteroidNumber().get(player.getName()))) || clicked.getType() == Material.GRAY_STAINED_GLASS_PANE){
+
+            } else if(clicked.equals(clearAsteroidGUIItems.makeEndClearAsteroid(true, ClearAsteroidGUI.asteroidNumber.get(player.getName()))) || clicked.getType() == Material.GRAY_STAINED_GLASS_PANE){
                 if(Singleton.getInstance().getClearAsteroidComplete().contains(player.getName())) {
                     player.closeInventory();
-                    Singleton.getInstance().getClearAsteroidNumber().remove(player.getName());
+                    ClearAsteroidGUI.asteroidNumber.remove(player.getName());
                     event.setCancelled(true);
                     taskComplete(player, "CLEAR ASTEROID");
                 }else{

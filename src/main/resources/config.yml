@@ -226,6 +226,7 @@ settings:
   voting: 60 #seconds
   crewmatevision: true
   impostervision: true
+  anonymousejection: false
   killcooldown: 20 #seconds
   sabotagelength: 30 #seconds
 

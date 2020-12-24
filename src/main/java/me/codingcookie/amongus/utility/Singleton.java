@@ -27,7 +27,11 @@ public class Singleton {
     private ArrayList<String> inspectComplete = null;
     private HashMap<String, Integer> fixWiringComplete = null;
 
-    private HashMap<String, Integer> clearAsteroidNumber = null;
+    // Voting
+    private ArrayList<String> emerMeetingList = new ArrayList<String>();
+    private HashMap<String, Integer> emerMeetingVotes = new HashMap<String, Integer>();
+    private ArrayList<String> hasVoted = new ArrayList<String>();
+    private HashMap<String, Integer> emerMeetingsCalled = new HashMap<String, Integer>();
 
     // Sabotage
     private HashMap<String, Boolean> startedMeltdown = null;
@@ -64,7 +68,10 @@ public class Singleton {
         inspectComplete = new ArrayList<String>();
         fixWiringComplete = new HashMap<String, Integer>();
 
-        clearAsteroidNumber = new HashMap<String, Integer>();
+        emerMeetingList = new ArrayList<String>();
+        emerMeetingVotes = new HashMap<String, Integer>();
+        hasVoted = new ArrayList<String>();
+        emerMeetingsCalled = new HashMap<String, Integer>();
 
         startedMeltdown = new HashMap<String, Boolean>();
         lightsKilled = new HashMap<String, Boolean>();
@@ -119,8 +126,17 @@ public class Singleton {
         return this.fixWiringComplete;
     }
 
-    public HashMap<String, Integer> getClearAsteroidNumber() {
-        return clearAsteroidNumber;
+    public ArrayList<String> getEmerMeetingList() {
+        return this.emerMeetingList;
+    }
+    public ArrayList<String> getHasVoted() {
+        return this.hasVoted;
+    }
+    public HashMap<String, Integer> getEmerMeetingVotes() {
+        return this.emerMeetingVotes;
+    }
+    public HashMap<String, Integer> getEmerMeetingsCalled() {
+        return this.emerMeetingsCalled;
     }
 
     public HashMap<String, Boolean> getStartedMeltdown() {

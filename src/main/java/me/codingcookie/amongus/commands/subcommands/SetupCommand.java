@@ -69,7 +69,10 @@ public class SetupCommand extends BaseCommand {
             }else if(args[0].equalsIgnoreCase("impostervision")){
                 sU.changeBooleanSetting("settings.impostervision");
                 settingsMenu.settingsMenu(player);
-            }else {
+            }else if(args[0].equalsIgnoreCase("anonymousejection")){
+                sU.changeBooleanSetting("settings.anonymousejection");
+                settingsMenu.settingsMenu(player);
+            } else {
                 try {
                     sU.waitingForInt(player, "settings." + args[0]);
                 }catch(NullPointerException e){

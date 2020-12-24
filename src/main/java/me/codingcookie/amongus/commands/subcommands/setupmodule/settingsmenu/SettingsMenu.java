@@ -35,6 +35,7 @@ public class SettingsMenu {
         sU.clickableInt(plugin.getConfig().getInt("settings.voting"), "VOTING", "seconds", "/amongus setup settings voting", "Click to change the length of the voting period", player);
         sU.clickableBooleanSetting(plugin.getConfig().getBoolean("settings.crewmatevision"), "CREWMATE VISION", "/amongus setup settings crewmatevision", "Click to enable/disable crewmate vision", player);
         sU.clickableBooleanSetting(plugin.getConfig().getBoolean("settings.impostervision"), "IMPOSTER VISION", "/amongus setup settings impostervision", "Click to enable/disable imposter vision", player);
+        sU.clickableBooleanSetting(plugin.getConfig().getBoolean("settings.anonymousejection"), "ANONYMOUS EJECTION", "/amongus setup settings anonymousejection", "Click to enable/disable anonymous ejection", player);
         sU.clickableInt(plugin.getConfig().getInt("settings.killcooldown"), "KILL COOLDOWN", "seconds", "/amongus setup settings killcooldown", "Click to change the cooldown of killing people", player);
         sU.clickableInt(plugin.getConfig().getInt("settings.sabotagelength"), "SABOTAGE LENGTH", "seconds", "/amongus setup settings sabotagelength", "Click me to change the length of the sabotages", player);
 

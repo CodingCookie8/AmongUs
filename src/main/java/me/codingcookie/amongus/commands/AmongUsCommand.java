@@ -9,6 +9,10 @@ import me.codingcookie.amongus.commands.subcommands.SetupCommand;
 import me.codingcookie.amongus.entities.ArmorStandsUtil;
 import me.codingcookie.amongus.gui.tasks.UploadGUI;
 import me.codingcookie.amongus.utility.GameUtil;
+import me.codingcookie.amongus.utility.MessagesUtil;
+import me.codingcookie.amongus.utility.Singleton;
+import me.codingcookie.amongus.utility.VoteUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import static org.bukkit.ChatColor.*;
@@ -27,6 +31,7 @@ public class AmongUsCommand extends BaseCommand {
     private PlayCommand playCommand;
     private ArmorStandsUtil armorStandsUtil;
     private GameUtil gameUtil;
+    private VoteUtil voteUtil;
     private UploadGUI uploadGUI;
 
     @Default
@@ -73,6 +78,36 @@ public class AmongUsCommand extends BaseCommand {
         if(args.length == 0){
             gameUtil = new GameUtil(plugin);
             gameUtil.endGame(RED, "Kicked!", player.getName() + " kicked you from the game", RED, "Kicked!", player.getName() + " kicked you from the game");
+        }
+    }
+
+    @Subcommand("vote")
+    @Description("Vote to remove a player from the game.")
+    @CommandPermission("amongus.vote")
+    public void onVote(Player player, String[] args){
+        if(args.length == 0){
+            return;
+        }
+        if(args.length == 1){
+            gameUtil = new GameUtil(plugin);
+            voteUtil = new VoteUtil(plugin);
+            Player clickedPlayer = Bukkit.getPlayer(args[0]);
+            if(clickedPlayer == null){
+                MessagesUtil.ERROR_2.sendMessage(player);
+                return;
+            }
+            if(!Singleton.getInstance().getHasVoted().contains(player.getName())) {
+                voteUtil.addVote(clickedPlayer.getName());
+                Singleton.getInstance().getHasVoted().add(player.getName());
+            }
+            for(String playerString : Singleton.getInstance().getAmongUsCurrentlyPlaying().keySet()) {
+                Player players = Bukkit.getPlayer(playerString);
+                if (players == null) { continue; }
+                for (int i = 1; i <= 30; i++) {
+                    players.sendMessage("");
+                }
+                voteUtil.sendVoting(players);
+            }
         }
     }
 

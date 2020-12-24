@@ -14,10 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 public class ClearAsteroidGUI {
 
@@ -40,8 +37,11 @@ public class ClearAsteroidGUI {
         return invClearAsteroid;
     }
 
+    public static HashMap<String, Integer> asteroidNumber = new HashMap<String, Integer>();
+
     public void setPreClearAsteroid(Player player){
         items = new ClearAsteroidGUIItems(plugin);
+        asteroidNumber.put(player.getName(), 0);
 
         if(Singleton.getInstance().getClearAsteroidComplete().contains(player.getName())){
             MessagesUtil.NO_TASK.sendMessage(player);
@@ -57,7 +57,6 @@ public class ClearAsteroidGUI {
         crewmateUtil = new CrewmateUtil(plugin);
         items = new ClearAsteroidGUIItems(plugin);
         getInvClearAsteroid().clear();
-        Singleton.getInstance().getClearAsteroidNumber().put(player.getName(), 0);
 
         for(int slot = 0; slot <= 53; slot++){
             getInvClearAsteroid().setItem(slot, items.makeAsteroidSpace());
@@ -90,13 +89,15 @@ public class ClearAsteroidGUI {
         new BukkitRunnable(){
             public void run(){
                 getInvClearAsteroid().clear();
-                if(Singleton.getInstance().getClearAsteroidNumber().get(player.getName()) <= 4){
-                    getInvClearAsteroid().setItem(22, items.makeEndClearAsteroid(false, Singleton.getInstance().getClearAsteroidNumber().get(player.getName())));
+
+                if(asteroidNumber.get(player.getName()) <= 4){
+                    getInvClearAsteroid().setItem(22, items.makeEndClearAsteroid(false, asteroidNumber.get(player.getName())));
                 }else{
                     fillInventory();
-                    getInvClearAsteroid().setItem(22, items.makeEndClearAsteroid(true, Singleton.getInstance().getClearAsteroidNumber().get(player.getName())));
+                    getInvClearAsteroid().setItem(22, items.makeEndClearAsteroid(true, asteroidNumber.get(player.getName())));
                     Singleton.getInstance().getClearAsteroidComplete().add(player.getName());
                 }
+                
             }
         }.runTaskLater(plugin, 15 * 20);
     }
