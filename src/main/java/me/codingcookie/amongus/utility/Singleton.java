@@ -1,6 +1,7 @@
 package me.codingcookie.amongus.utility;
 
 import org.bukkit.GameMode;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ public class Singleton {
     private ArrayList<String> uploadComplete = null;
     private ArrayList<String> downloadComplete = null;
     private ArrayList<String> navigationComplete = null;
+    private HashMap<String, ItemStack> navMap = null;
     private ArrayList<String> clearAsteroidComplete = null;
     private ArrayList<String> swipeCardComplete = null;
     private ArrayList<String> fuelEnginesComplete = null;
@@ -61,6 +63,7 @@ public class Singleton {
         uploadComplete = new ArrayList<String>();
         downloadComplete = new ArrayList<String>();
         navigationComplete = new ArrayList<String>();
+        navMap = new HashMap<String, ItemStack>();
         clearAsteroidComplete = new ArrayList<String>();
         swipeCardComplete = new ArrayList<String>();
         fuelEnginesComplete = new ArrayList<String>();
@@ -112,6 +115,9 @@ public class Singleton {
     }
     public ArrayList<String> getNavigationComplete() {
         return this.navigationComplete;
+    }
+    public HashMap<String, ItemStack> getNavMap() {
+        return navMap;
     }
     public ArrayList<String> getSwipeCardComplete() {
         return this.swipeCardComplete;

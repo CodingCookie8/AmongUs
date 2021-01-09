@@ -1,6 +1,7 @@
 package me.codingcookie.amongus.utility;
 
 import me.codingcookie.amongus.AmongUs;
+import me.codingcookie.amongus.gui.items.NavigationGUIItems;
 import org.bukkit.*;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -37,7 +38,6 @@ public class GameUtil {
         Singleton.getInstance().getHasVoted().clear();
 
         // TODO: REMOVE THIS COMMENT ONCE DONE TESTING
-
         /*
         if(checkEndGame()){
             return;
@@ -57,9 +57,9 @@ public class GameUtil {
         int emerCooldown = plugin.getConfig().getInt("settings.emergencycooldown");
         Singleton.getInstance().getEmerMeetingList().add("Placeholder for cooldown button");
 
-        for(String playerString : Singleton.getInstance().getAmongUsCurrentlyPlaying().keySet()){
+        for(String playerString : Singleton.getInstance().getAmongUsCurrentlyPlaying().keySet()) {
             Player player = Bukkit.getPlayer(playerString);
-            if(player == null){
+            if (player == null) {
                 continue;
             }
 
@@ -72,19 +72,25 @@ public class GameUtil {
             player.playSound(player.getLocation(), Sound.AMBIENT_NETHER_WASTES_MOOD, 10, 1);
             player.setGameMode(GameMode.ADVENTURE);
 
-            if(Singleton.getInstance().getAmongUsCurrentlyPlaying().get(player.getName()).equalsIgnoreCase("crewmate")) {
-                cU.sendTasks(player);
-                cU.giveItems(player);
-                cU.setVision(player);
-            }
-            if(Singleton.getInstance().getAmongUsCurrentlyPlaying().get(player.getName()).equalsIgnoreCase("imposter")) {
-                iU.giveItems(player);
-                iU.setSabotages(player);
-            }
-            if (Singleton.getInstance().getAmongUsCurrentlyPlaying().get(playerString).equalsIgnoreCase("dead")){
-                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1));
+            String role = Singleton.getInstance().getAmongUsCurrentlyPlaying().get(player.getName());
+            switch(role){
+                case "crewmate":
+                    cU.sendTasks(player);
+                    cU.giveItems(player);
+                    cU.setVision(player);
+                    break;
+                case "imposter":
+                    iU.giveItems(player);
+                    iU.setSabotages(player);
+                    break;
+                default:
+                    MessagesUtil.ERROR_3.sendMessage(player);
             }
 
+            if(Singleton.getInstance().getAmongUsDead().contains(player.getName())){
+                player.getInventory().clear();
+                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 1));
+            }
         }
 
         new BukkitRunnable(){
@@ -118,7 +124,7 @@ public class GameUtil {
             return;
         }
 
-        if(Singleton.getInstance().getAmongUsCurrentlyPlaying().get(playerThatCalledMeeting.getName()).equalsIgnoreCase("dead")){
+        if(Singleton.getInstance().getAmongUsDead().contains(playerThatCalledMeeting.getName())){
             return;
         }
 
@@ -222,23 +228,27 @@ public class GameUtil {
         for(String playerString : Singleton.getInstance().getAmongUsCurrentlyPlaying().keySet()) {
             Player players = Bukkit.getPlayer(playerString);
             if (players == null) { continue; }
-            if (Singleton.getInstance().getAmongUsCurrentlyPlaying().get(playerString).equalsIgnoreCase("dead")){ continue; }
+            if (Singleton.getInstance().getAmongUsDead().contains(playerString)){ continue; }
             players.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 140, 1));
 
             if(!plugin.getConfig().getBoolean("settings.anonymousejection")){
-                if(Singleton.getInstance().getAmongUsCurrentlyPlaying().get(ejectedPlayerString).equalsIgnoreCase("imposter")) {
-                    players.sendTitle(RED + "" + BOLD + ejectedPlayerString, RED + "was an imposter.", 40, 100, 40);
-                }
-                if(Singleton.getInstance().getAmongUsCurrentlyPlaying().get(ejectedPlayerString).equalsIgnoreCase("crewmate")) {
-                    players.sendTitle(GREEN + "" + BOLD + ejectedPlayerString, GREEN + "was not an imposter.", 40, 100, 40);
+                String role = Singleton.getInstance().getAmongUsCurrentlyPlaying().get(ejectedPlayerString);
+                switch(role){
+                    case "imposter":
+                        players.sendTitle(RED + "" + BOLD + ejectedPlayerString, RED + "was an imposter.", 40, 100, 40);
+                        break;
+                    case "crewmate":
+                        players.sendTitle(GREEN + "" + BOLD + ejectedPlayerString, GREEN + "was not an imposter.", 40, 100, 40);
+                        break;
+                    default:
+                       MessagesUtil.ERROR_3.sendMessage(players);
                 }
             }else{
                 players.sendTitle(RED + "" + BOLD + ejectedPlayerString, RED + "was ejected from the ship.", 40, 100, 40);
             }
 
         }
-        Singleton.getInstance().getAmongUsCurrentlyPlaying().remove(ejectedPlayerString);
-        Singleton.getInstance().getAmongUsCurrentlyPlaying().put(ejectedPlayerString, "dead");
+        Singleton.getInstance().getAmongUsDead().add(ejectedPlayerString);
     }
 
     Location getLocation(int i){
@@ -266,14 +276,21 @@ public class GameUtil {
 
     public void endGame(ChatColor imposterColor, String imposterTitle, String imposterSubtitle, ChatColor crewmateColor, String crewmateTitle, String crewmateSubtitle){
         for(String playerString : Singleton.getInstance().getAmongUsCurrentlyPlaying().keySet()){
-            if(Singleton.getInstance().getAmongUsCurrentlyPlaying().get(playerString).equalsIgnoreCase("imposter")){
-                Player imposters = Bukkit.getPlayer(playerString);
-                if(imposters == null){ continue; }
-                imposters.sendTitle(imposterColor + "" + BOLD + imposterTitle, GRAY + imposterSubtitle, 20, 120, 20);
-            }else{
-                Player crewmates = Bukkit.getPlayer(playerString);
-                if(crewmates == null){ continue; }
-                crewmates.sendTitle(crewmateColor + "" + BOLD + crewmateTitle, GRAY + crewmateSubtitle, 20, 120, 20);
+            String role = Singleton.getInstance().getAmongUsCurrentlyPlaying().get(playerString);
+            switch(role){
+                case "imposter":
+                    Player imposters = Bukkit.getPlayer(playerString);
+                    if(imposters == null){ continue; }
+                    imposters.sendTitle(imposterColor + "" + BOLD + imposterTitle, GRAY + imposterSubtitle, 20, 120, 20);
+                    break;
+                case "crewmate":
+                    Player crewmates = Bukkit.getPlayer(playerString);
+                    if(crewmates == null){ continue; }
+                    crewmates.sendTitle(crewmateColor + "" + BOLD + crewmateTitle, GRAY + crewmateSubtitle, 20, 120, 20);
+                    break;
+                default:
+                    Player players = Bukkit.getPlayer(playerString);
+                    MessagesUtil.ERROR_3.sendMessage(players);
             }
         }
 
@@ -321,8 +338,6 @@ public class GameUtil {
     public Boolean checkEndGame(){
         long countImposters = Singleton.getInstance().getAmongUsCurrentlyPlaying().values().stream().filter(v -> v.equals("imposter")).count();
         long countCrewmates = Singleton.getInstance().getAmongUsCurrentlyPlaying().values().stream().filter(v -> v.equals("crewmate")).count();
-
-        //endGame(BLUE, "Victory!", "You won this round!", RED, "Defeat!", "The imposters killed all the crewmates!");
 
         if(countImposters >= countCrewmates){
             endGame(BLUE, "Victory!", "You won this round", RED, "Defeat!", "The imposters killed all the crewmates");

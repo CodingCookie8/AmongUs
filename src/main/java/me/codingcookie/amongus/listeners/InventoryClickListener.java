@@ -3,10 +3,7 @@ package me.codingcookie.amongus.listeners;
 import me.codingcookie.amongus.AmongUs;
 import me.codingcookie.amongus.gui.items.*;
 import me.codingcookie.amongus.gui.sabotages.SabotageGUI;
-import me.codingcookie.amongus.gui.tasks.ClearAsteroidGUI;
-import me.codingcookie.amongus.gui.tasks.DownloadGUI;
-import me.codingcookie.amongus.gui.tasks.InspectGUI;
-import me.codingcookie.amongus.gui.tasks.UploadGUI;
+import me.codingcookie.amongus.gui.tasks.*;
 import me.codingcookie.amongus.utility.CrewmateUtil;
 import me.codingcookie.amongus.utility.ImposterUtil;
 import me.codingcookie.amongus.utility.Singleton;
@@ -16,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -24,7 +22,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
 import java.util.UUID;
 
+import static org.bukkit.ChatColor.*;
+
 public class InventoryClickListener implements Listener {
+
+    // TODO: CRUCIAL:
+    // ADD DELAYS WHEN OPENING NEW INVENTORIES
 
     private AmongUs plugin;
     private SabotageGUI sabotageGUI;
@@ -38,12 +41,16 @@ public class InventoryClickListener implements Listener {
     private ClearAsteroidGUIItems clearAsteroidGUIItems;
     private InspectGUI inspectGUI;
     private InspectGUIItems inspectGUIItems;
+    private NavigationGUI navigationGUI;
+    private NavigationGUIItems navigationGUIItems;
 
     private ImposterUtil iU;
 
     public InventoryClickListener(AmongUs plugin){
         this.plugin = plugin;
     }
+
+    private String pre2 = DARK_GRAY + "   > ";
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event){
@@ -52,33 +59,29 @@ public class InventoryClickListener implements Listener {
         InventoryView view = player.getOpenInventory();
 
         crewmateUtil = new CrewmateUtil(plugin);
-        uploadGUI = new UploadGUI(plugin);
-        uploadGUIItems = new UploadGUIItems(plugin);
-        downloadGUI = new DownloadGUI(plugin);
-        downloadGUIItems = new DownloadGUIItems(plugin);
-        sabotageGUI = new SabotageGUI(plugin);
-        sabotageGUIItems = new SabotageGUIItems(plugin);
-        clearAsteroidGUI = new ClearAsteroidGUI(plugin);
-        clearAsteroidGUIItems = new ClearAsteroidGUIItems(plugin);
-        inspectGUI = new InspectGUI(plugin);
-        inspectGUIItems = new InspectGUIItems(plugin);
 
         iU = new ImposterUtil(plugin);
 
-        if(view == null){
+        if(view == null){ return; }
+
+        if(clicked == null){
+            event.setCancelled(false);
             return;
         }
 
-        if(!Singleton.getInstance().getAmongUsCurrentlyPlaying().containsKey(player.getName())){
-            return;
+        if(clicked.getType() == Material.AIR){
+            event.setCancelled(false);
+            if(!view.getTitle().equalsIgnoreCase("NAVIGATION TASK")) {
+                return;
+            }
         }
 
-        if(clicked == null || clicked.getType() == Material.AIR){
-            event.setCancelled(true);
-            return;
-        }
+        if(!Singleton.getInstance().getAmongUsCurrentlyPlaying().containsKey(player.getName())){ return; }
 
         if(view.getTitle().equalsIgnoreCase("SABOTAGE")){
+            sabotageGUI = new SabotageGUI(plugin);
+            sabotageGUIItems = new SabotageGUIItems(plugin);
+
             if(clicked.equals(sabotageGUIItems.makeKillLights())){
                 iU.killLights(player);
                 event.setCancelled(true);
@@ -98,6 +101,9 @@ public class InventoryClickListener implements Listener {
         }
 
         if(view.getTitle().equalsIgnoreCase("UPLOAD TASK")){
+            uploadGUI = new UploadGUI(plugin);
+            uploadGUIItems = new UploadGUIItems(plugin);
+
             if(clicked.equals(uploadGUIItems.makeStartUpload())){
                 uploadGUI.setUploadGUI(player);
                 event.setCancelled(true);
@@ -115,6 +121,9 @@ public class InventoryClickListener implements Listener {
         }
 
         if(view.getTitle().equalsIgnoreCase("DOWNLOAD TASK")){
+            downloadGUI = new DownloadGUI(plugin);
+            downloadGUIItems = new DownloadGUIItems(plugin);
+
             if(clicked.equals(downloadGUIItems.makeStartDownload())){
                 downloadGUI.setDownloadGUI(player);
                 event.setCancelled(true);
@@ -132,6 +141,8 @@ public class InventoryClickListener implements Listener {
         }
 
         if(view.getTitle().equalsIgnoreCase("CLEAR ASTEROID TASK")){
+            clearAsteroidGUI = new ClearAsteroidGUI(plugin);
+            clearAsteroidGUIItems = new ClearAsteroidGUIItems(plugin);
 
             if(clicked.equals(clearAsteroidGUIItems.makeStartClearAsteroid())){
                 clearAsteroidGUI.setClearAsteroid(player);
@@ -159,6 +170,9 @@ public class InventoryClickListener implements Listener {
         }
 
         if(view.getTitle().equalsIgnoreCase("INSPECT TASK")){
+            inspectGUI = new InspectGUI(plugin);
+            inspectGUIItems = new InspectGUIItems(plugin);
+
             if(clicked.getType() == Material.PLAYER_HEAD){
                 SkullMeta meta = (SkullMeta) clicked.getItemMeta();
                 if(meta == null){
@@ -180,12 +194,56 @@ public class InventoryClickListener implements Listener {
                 return;
             }
         }
+
+        if(view.getTitle().equalsIgnoreCase("NAVIGATION TASK") || view.getTitle().equalsIgnoreCase("ALIGNING MAPS...")){
+            navigationGUI = new NavigationGUI(plugin);
+            navigationGUIItems = new NavigationGUIItems(plugin);
+
+            if(clicked.getType() == Material.ENDER_PEARL){
+                player.closeInventory();
+                new BukkitRunnable() {
+                    public void run() {
+                        navigationGUI.setNavigation(player);
+                    }
+                }.runTaskLater(plugin, 1);
+                event.setCancelled(true);
+            }
+            else if(clicked.getType().equals(Material.FILLED_MAP) || clicked.getType().equals(Material.MAP) || event.isShiftClick()) {
+                event.setCancelled(false);
+            }
+            else if(event.getRawSlot() == 13 || event.getRawSlot() == 31){
+                view.setItem(event.getSlot(), clicked);
+                event.setCancelled(false);
+                player.updateInventory();
+                new BukkitRunnable() {
+                    public void run() {
+                        navigationGUI.startAligning(player);
+                    }
+                }.runTaskLater(plugin, 1);
+            }
+            else if(clicked.getType() == Material.ENDER_EYE || clicked.getType() == Material.BLACK_STAINED_GLASS_PANE){
+                if(Singleton.getInstance().getNavigationComplete().contains(player.getName())){
+                    player.closeInventory();
+                    taskComplete(player, "NAVIGATION");
+                    event.setCancelled(true);
+                }else{
+                    event.setCancelled(true);
+                }
+            }else{
+                event.setCancelled(true);
+            }
+        }
     }
 
     void taskComplete(Player player, String task){
         crewmateUtil = new CrewmateUtil(plugin);
         if(Singleton.getInstance().getAmongUsCurrentlyPlaying().get(player.getName()).equalsIgnoreCase("crewmate")) {
-            crewmateUtil.taskComplete(player, task);
+            for (int i = 1; i <= 30; i++) {
+                player.sendMessage("");
+            }
+
+            player.sendMessage(pre2 + GREEN + "" + BOLD + task + GOLD + " task complete!");
+            player.sendMessage("");
             new BukkitRunnable() {
                 public void run() {
                     crewmateUtil.sendTasks(player);
@@ -193,4 +251,5 @@ public class InventoryClickListener implements Listener {
             }.runTaskLater(plugin, 60);
         }
     }
+
 }

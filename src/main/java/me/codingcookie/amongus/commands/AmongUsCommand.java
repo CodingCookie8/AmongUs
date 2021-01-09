@@ -7,6 +7,7 @@ import me.codingcookie.amongus.commands.subcommands.HelpCommand;
 import me.codingcookie.amongus.commands.subcommands.PlayCommand;
 import me.codingcookie.amongus.commands.subcommands.SetupCommand;
 import me.codingcookie.amongus.entities.ArmorStandsUtil;
+import me.codingcookie.amongus.gui.tasks.NavigationGUI;
 import me.codingcookie.amongus.gui.tasks.UploadGUI;
 import me.codingcookie.amongus.utility.GameUtil;
 import me.codingcookie.amongus.utility.MessagesUtil;
@@ -14,6 +15,7 @@ import me.codingcookie.amongus.utility.Singleton;
 import me.codingcookie.amongus.utility.VoteUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import static org.bukkit.ChatColor.*;
 
@@ -33,6 +35,7 @@ public class AmongUsCommand extends BaseCommand {
     private GameUtil gameUtil;
     private VoteUtil voteUtil;
     private UploadGUI uploadGUI;
+    private NavigationGUI navGUI;
 
     @Default
     @CommandPermission("amongus.help")
@@ -129,15 +132,5 @@ public class AmongUsCommand extends BaseCommand {
         }
         gameUtil = new GameUtil(plugin);
         gameUtil.startRound();
-    }
-
-    @Subcommand("openuploadtask")
-    @Description("temporary development command.")
-    public void onUploadTask(Player player, String[] args){
-        if(!player.isOp()){
-            return;
-        }
-        uploadGUI = new UploadGUI(plugin);
-        uploadGUI.setUploadGUI(player);
     }
 }

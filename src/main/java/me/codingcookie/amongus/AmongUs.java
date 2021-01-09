@@ -4,12 +4,21 @@ import co.aikar.commands.BukkitCommandManager;
 import me.codingcookie.amongus.commands.AmongUsCommand;
 import me.codingcookie.amongus.commands.subcommands.SetupCommand;
 import me.codingcookie.amongus.commands.subcommands.setupmodule.locationmenu.LocationMainMenu;
+import me.codingcookie.amongus.gui.items.NavigationGUIItems;
+import me.codingcookie.amongus.gui.tasks.NavigationGUI;
 import me.codingcookie.amongus.listeners.*;
+import me.codingcookie.amongus.utility.MessagesUtil;
+import me.codingcookie.amongus.utility.Singleton;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class AmongUs extends JavaPlugin {
 
@@ -17,6 +26,8 @@ public class AmongUs extends JavaPlugin {
     private File folder;
     private File messagesFile;
     private File configFile;
+
+    private BufferedImage img = null;
 
     private AmongUsCommand amongUsCommandRedo;
     private SetupCommand setupCommand;
@@ -73,7 +84,16 @@ public class AmongUs extends JavaPlugin {
         PlayerInteractListener.mapTask.clear();
         playerInteractListener.fillInHashMap();
 
-        asciiArt();
+        Bukkit.getPluginManager().disablePlugin(this);
+    }
+
+    @Override
+    public void onDisable(){
+        PlayerInteractListener.mapTask.clear();
+    }
+
+    public BufferedImage getNavImg(){
+        return img;
     }
 
     void asciiArt(){

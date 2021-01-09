@@ -2,6 +2,7 @@ package me.codingcookie.amongus.commands.subcommands;
 
 import me.codingcookie.amongus.AmongUs;
 import me.codingcookie.amongus.files.messages.GetMessagesFile;
+import me.codingcookie.amongus.gui.items.NavigationGUIItems;
 import me.codingcookie.amongus.permissions.PermissionHandler;
 import me.codingcookie.amongus.utility.Singleton;
 import org.bukkit.Bukkit;

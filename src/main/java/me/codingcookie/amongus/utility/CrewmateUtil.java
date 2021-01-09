@@ -5,6 +5,7 @@ import me.codingcookie.amongus.items.CrewmateItems;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import static org.bukkit.ChatColor.*;
 
@@ -67,12 +68,18 @@ public class CrewmateUtil {
         player.sendMessage("");
     }
 
-    public void taskComplete(Player player, String task){
+    public void failedTask(Player player, String task){
         for (int i = 1; i <= 30; i++) {
             player.sendMessage("");
         }
 
-        player.sendMessage(pre2 + GREEN + "" + BOLD + task + GOLD + " task complete!");
+        player.sendMessage(pre2 + GREEN + "" + BOLD + task + GOLD + " task failed!");
         player.sendMessage("");
+
+        new BukkitRunnable(){
+            public void run() {
+                sendTasks(player);
+            }
+        }.runTaskLater(plugin, 60);
     }
 }

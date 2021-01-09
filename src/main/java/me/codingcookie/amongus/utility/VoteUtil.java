@@ -88,11 +88,14 @@ public class VoteUtil {
         int votingTime = plugin.getConfig().getInt("settings.voting");
 
         for(String playerString : Singleton.getInstance().getAmongUsCurrentlyPlaying().keySet()){
-            if (Singleton.getInstance().getAmongUsCurrentlyPlaying().get(playerString).equalsIgnoreCase("dead")){ continue; }
-            Singleton.getInstance().getEmerMeetingVotes().put(playerString, 0);
-            Singleton.getInstance().getEmerMeetingList().add(playerString);
             Player players = Bukkit.getPlayer(playerString);
             if(players == null){ continue; }
+
+            players.closeInventory();
+
+            if (Singleton.getInstance().getAmongUsDead().contains(playerString)){ continue; }
+            Singleton.getInstance().getEmerMeetingVotes().put(playerString, 0);
+            Singleton.getInstance().getEmerMeetingList().add(playerString);
 
             ArmorStand aS = (ArmorStand) players.getWorld().spawnEntity(players.getLocation(), EntityType.ARMOR_STAND);
             aS.setSmall(true);

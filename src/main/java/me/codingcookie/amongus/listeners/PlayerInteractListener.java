@@ -4,11 +4,9 @@ import me.codingcookie.amongus.AmongUs;
 import me.codingcookie.amongus.commands.subcommands.setupmodule.locationmenu.LocationUtility;
 import me.codingcookie.amongus.entities.ArmorStandsUtil;
 import me.codingcookie.amongus.gui.sabotages.SabotageGUI;
-import me.codingcookie.amongus.gui.tasks.ClearAsteroidGUI;
-import me.codingcookie.amongus.gui.tasks.DownloadGUI;
-import me.codingcookie.amongus.gui.tasks.InspectGUI;
-import me.codingcookie.amongus.gui.tasks.UploadGUI;
+import me.codingcookie.amongus.gui.tasks.*;
 import me.codingcookie.amongus.utility.GameUtil;
+import me.codingcookie.amongus.utility.MessagesUtil;
 import me.codingcookie.amongus.utility.Singleton;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,6 +35,7 @@ public class PlayerInteractListener implements Listener {
     private DownloadGUI downloadGUI;
     private ClearAsteroidGUI clearAsteroidGUI;
     private InspectGUI inspectGUI;
+    private NavigationGUI navigationGUI;
 
     public PlayerInteractListener(AmongUs plugin){
         this.plugin = plugin;
@@ -56,6 +55,7 @@ public class PlayerInteractListener implements Listener {
         downloadGUI = new DownloadGUI(plugin);
         clearAsteroidGUI = new ClearAsteroidGUI(plugin);
         inspectGUI = new InspectGUI(plugin);
+        navigationGUI = new NavigationGUI(plugin);
         Block clicked = event.getClickedBlock();
 
         if (Singleton.getInstance().getAmongUsCurrentlyPlaying().containsKey(player.getName())) {
@@ -70,24 +70,31 @@ public class PlayerInteractListener implements Listener {
                 if (clicked.getType() != Material.STONE_BUTTON) {
                     return;
                 }
-
                 if(!mapTask.containsKey(clicked.getLocation())) {
                     return;
                 }
-                if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("upload")){
-                    uploadGUI.setPreUploadGUI(player);
-                }
-                if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("download")){
-                    downloadGUI.setPreDownloadGUI(player);
-                }
-                if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("clearasteroid")){
-                    clearAsteroidGUI.setPreClearAsteroid(player);
-                }
-                if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("inspect")){
-                    inspectGUI.setPreInspect(player);
-                }
-                if(mapTask.get(clicked.getLocation()).equalsIgnoreCase("button")){
-                    gameUtil.emergencyMeeting(player, " called an emergency meeting!");
+                String task = mapTask.get(clicked.getLocation());
+                switch(task) {
+                    case "upload":
+                        uploadGUI.setPreUploadGUI(player);
+                        break;
+                    case "download":
+                        downloadGUI.setPreDownloadGUI(player);
+                        break;
+                    case "clearasteroid":
+                        clearAsteroidGUI.setPreClearAsteroid(player);
+                        break;
+                    case "inspect":
+                        inspectGUI.setPreInspect(player);
+                        break;
+                    case "navigation":
+                        navigationGUI.setPreNavigation(player);
+                        break;
+                    case "button":
+                        gameUtil.emergencyMeeting(player, " called an emergency meeting!");
+                        break;
+                    default:
+                        MessagesUtil.ERROR_5.sendMessage(player);
                 }
             }
 
